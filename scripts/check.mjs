@@ -3,11 +3,46 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import assert from 'node:assert/strict';
 import {studentText,timelineText,render,programTitle} from './student-content.mjs';
+import {durationFact,routeFact} from './program-facts.mjs';
+import {readFilters,matchesProgram,selectedIds,emptyFilters,durationOptions} from '../shared/program-filters.mjs';
 const catalog=JSON.parse(fs.readFileSync('data/catalog.json'));
 const programs=JSON.parse(fs.readFileSync('docs/public/data/programs.json'));
 const timelines=JSON.parse(fs.readFileSync('docs/public/data/timelines.json'));
 const dist='docs/.vitepress/dist',base=process.env.SITE_BASE||'/';
 const alumni=JSON.parse(fs.readFileSync('data/alumni.json'));
+// Admissions filters must never turn intake dates, work requirements or
+// unconfirmed/negative routes into eligibility claims.
+assert.equal(durationFact('MSc；全日制可选；需2年经验').category,'unknown');
+assert.equal(durationFact('1年；2027年10月入学').category,'short');
+assert.equal(durationFact('2年；3月、7月').category,'two');
+assert.equal(durationFact('9/12/15 个月').category,'variable');
+assert.equal(durationFact('1.5–2年，旧FAQ12个月，待核验').category,'unknown');
+assert.equal(durationFact('3学期、36学分').category,'terms');
+assert.equal(durationFact('至少1年').category,'variable');
+assert.deepEqual(routeFact('2027首届100%统考，无推免','china-mainland').values,['exam']);
+assert.deepEqual(routeFact('推免；统考待核验','china-mainland').values,['recommendation']);
+assert.deepEqual(routeFact('仅推免；不接受统考','china-mainland').values,['recommendation']);
+assert.deepEqual(routeFact('自主网申；按项目英语要求','china-mainland').values,['application']);
+const index=JSON.parse(fs.readFileSync('docs/public/data/program-index.json'));
+assert.equal(index.length,programs.length);
+assert.ok(fs.statSync('docs/public/data/program-index.json').size<fs.statSync('docs/public/data/programs.json').size*.6,'explorer index should exclude full detail payload');
+for(const p of index){
+ assert.ok(!p.fields && !p.overview,'full details leaked into index');
+ assert.ok(durationOptions.some(([id])=>id===p.facts.duration.category));
+ const detail=JSON.parse(fs.readFileSync(`docs/public/data/program-details/${p.schoolId}.json`))[p.id];
+ const original=programs.find(x=>x.id===p.id);
+ assert.deepEqual(detail.fields,original.fields,'detail text changed for '+p.id);
+ assert.deepEqual(detail.sources,original.sources,'source links changed for '+p.id);
+}
+const f=readFilters(new URLSearchParams('region=australia&duration=two&route=application'),catalog);
+const matched=index.filter(p=>matchesProgram(p,f));
+assert.ok(matched.length>0 && matched.every(p=>p.region==='australia' && p.facts.duration.category==='two' && p.facts.routes.values.includes('application')));
+assert.deepEqual(readFilters(new URLSearchParams('region=bad&school=bad&duration=bad&route=bad&tag=bad'),catalog),emptyFilters());
+assert.equal(readFilters(new URLSearchParams('region=australia&school=cn-pku'),catalog).school,'');
+assert.ok(matchesProgram(index.find(p=>p.id==='cn-cufe-p002'),{...emptyFilters(),route:'recommendation'}));
+assert.ok(!matchesProgram(index.find(p=>p.id==='cn-cufe-p002'),{...emptyFilters(),route:'exam'}));
+assert.deepEqual(selectedIds(['bad',index[0].id,index[0].id,index[1].id],index),[index[0].id,index[1].id]);
+assert.deepEqual(selectedIds({invalid:true},index),[]);
 assert.equal(studentText('项目级就业率官网未公开。'),'');
 assert.ok(studentText('2027年学费12.8万元；2028年费用待核验。').includes('12.8万元'));
 assert.ok(studentText('开学前至少2年毕业后全职工作经验，本科实习不算。').includes('本科实习不算'));

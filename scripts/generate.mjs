@@ -4,6 +4,7 @@ import matter from 'gray-matter';
 import MarkdownIt from 'markdown-it';
 import crypto from 'node:crypto';
 import {groupFields,renderFields,schoolPage,timelineText,studentText,plain,programTitle,programTags,render} from './student-content.mjs';
+import {programFacts} from './program-facts.mjs';
 const alumni=JSON.parse(fs.readFileSync('data/alumni.json','utf8')).cases;
 const md=new MarkdownIt({html:false,linkify:true});
 const regions={'china-mainland':'中国内地','hong-kong':'中国香港','singapore':'新加坡','united-states':'美国','united-kingdom':'英国','australia':'澳大利亚'};
@@ -48,6 +49,7 @@ for(const file of walk('schools').filter(f=>f.endsWith('.md')).sort()){
   }
   p.degree=plain(studentText(row?.[2]||p.degree));
   p.focus=plain(studentText(row?.[3]||p.focus));
+  p.facts=programFacts(p,groups,row);
   programs.push(p);schoolPrograms.push({...p,row,groups});
  }
  s.count=chunks.length;s.sources=[...new Set([...section(content,7).matchAll(/https?:\/\/[^\s)<>|]+/g)].map(x=>x[0]))].length;
@@ -60,8 +62,13 @@ for(const file of walk('schools').filter(f=>f.endsWith('.md')).sort()){
 if(new Set(programs.map(p=>p.id)).size!==programs.length)throw Error('重复项目ID');
 const data={schools,regions,programCount:programs.length,sourceCount:schools.reduce((n,s)=>n+s.sources,0),assembledOn:'2026-10-19',issues};
 fs.writeFileSync('data/catalog.json',JSON.stringify(data,null,2));fs.writeFileSync('docs/public/data/programs.json',JSON.stringify(programs));fs.writeFileSync('docs/public/data/timelines.json',JSON.stringify(timeline));
-const columns=['school_id','program_id','school_name','region','program_name','department','degree_duration','focus','admissions','reference_intake_years','last_verified_on','report_status','source_urls','markdown_path'];
+// The explorer loads searchable summaries first; full, linked text is fetched
+// only for the schools included in a comparison.
+fs.writeFileSync('docs/public/data/program-index.json',JSON.stringify(programs.map(({fields,overview,sources,...p})=>p)));
+fs.mkdirSync('docs/public/data/program-details',{recursive:true});
+for(const s of schools)fs.writeFileSync(`docs/public/data/program-details/${s.id}.json`,JSON.stringify(Object.fromEntries(programs.filter(p=>p.schoolId===s.id).map(p=>[p.id,{fields:p.fields,sources:p.sources}]))));
+const columns=['school_id','program_id','school_name','region','program_name','department','degree_duration','focus','admissions','reference_intake_years','last_verified_on','report_status','source_urls','markdown_path','duration_category','admission_routes','routes_need_review'];
 const quote=v=>'"'+String(v??'').replaceAll('"','""')+'"';
-const csv=[columns,...programs.map(p=>[p.schoolId,p.id,p.school,p.region,p.title,p.department,p.degree,p.focus,p.admission,(p.years||[]).join(';'),p.verified,p.status,p.sources.join(' '),`schools/${p.sourceRegion}/${p.schoolId}.md`])].map(r=>r.map(quote).join(',')).join('\n');
+const csv=[columns,...programs.map(p=>[p.schoolId,p.id,p.school,p.region,p.title,p.department,p.degree,p.focus,p.admission,(p.years||[]).join(';'),p.verified,p.status,p.sources.join(' '),`schools/${p.sourceRegion}/${p.schoolId}.md`,p.facts.duration.category,p.facts.routes.values.join(';'),p.facts.routes.uncertain])].map(r=>r.map(quote).join(',')).join('\n');
 fs.writeFileSync('data/programs.csv','\ufeff'+csv);fs.writeFileSync('docs/public/data/programs.csv','\ufeff'+csv);
 console.log(JSON.stringify({schools:schools.length,programs:programs.length,issues},null,2));
