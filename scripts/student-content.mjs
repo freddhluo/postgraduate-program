@@ -140,10 +140,10 @@ export function schoolPage(s, entries, content, getSection, alumni) {
       const fields=keys.flatMap(k=>g[k]);
       if(fields.length) lines.push(`<details class="program-detail"><summary>${label}</summary>\n\n${renderFields(fields)}\n</details>`);
     }
-    lines.push(`<div class="program-compare">\n\n[加入跨校对比 →](/programs.html?add=${p.id})\n\n</div>`);
+    lines.push(`<div class="program-compare">\n\n<SaveProgram id="${p.id}" title="${escape(p.title)}" />\n\n[加入跨校对比 →](/programs.html?add=${p.id}) · [查看收藏清单](/programs.html?saved=1)\n\n</div>`);
   }
   const timeline=timelineText(getSection(content,4));
-  lines.push('## 申请时间线 {#application-timeline}', '以下是对应年份的申请节点；2028 年入学准备可结合[全站时间线](/timeline.html)安排。', timeline);
+  lines.push('## 申请时间线 {#application-timeline}', `以下是对应年份的申请节点；2028 年入学准备可结合[全站时间线](/timeline.html?school=${s.id}#school-dates)安排。`, timeline);
   const links=sourceLinks(content);
   lines.push('## 官方链接与延伸阅读 {#official-sources}', `<details class="source-directory"><summary>项目官网、招生与课程链接（${links.size} 项）</summary>\n`);
   for(const [url,title] of links) lines.push(`- [${title||new URL(url).hostname}](${url})`);
