@@ -12,9 +12,13 @@ const {saved,savedError,mergeSaved}=useSavedPrograms();
 const savedOnly=ref(false),backupInput=ref(null),importing=ref(false),resultsEl=ref(null);
 const favorites=computed(()=>all.value.filter(p=>saved.value.includes(p.id)));
 const comparisonEl=ref(null),details=reactive({}),detailErrors=reactive({}),detailLoading=reactive({}),requests=new Map();
-let restoring=true;
+const searchText=ref({}),searchReady=ref(false),searchError=ref('');
+let restoring=true,searchRequest;
+const searchFailed=computed(()=>!!filters.q.trim()&&!!searchError.value);
+const searchPending=computed(()=>!!filters.q.trim()&&!searchReady.value&&!searchFailed.value);
+const resultsReady=computed(()=>!loading.value&&!error.value&&!searchPending.value&&!searchFailed.value);
 const schools=computed(()=>catalog.schools.filter(s=>!filters.region||s.region===filters.region));
-const filtered=computed(()=>all.value.filter(p=>(!savedOnly.value||saved.value.includes(p.id))&&matchesProgram(p,filters)));
+const filtered=computed(()=>searchPending.value||searchFailed.value?[]:all.value.filter(p=>(!savedOnly.value||saved.value.includes(p.id))&&matchesProgram(p,filters,searchText.value[p.id]||'')));
 const pages=computed(()=>Math.max(1,Math.ceil(filtered.value.length/18)));
 const visible=computed(()=>filtered.value.slice((page.value-1)*18,page.value*18));
 const picked=computed(()=>selected.value.map(id=>all.value.find(p=>p.id===id)).filter(Boolean));
@@ -52,11 +56,23 @@ async function load(){
  catch{error.value='项目数据加载失败，请检查网络后重试。';}
  finally{loading.value=false;}
 }
+async function ensureSearch(){
+ if(searchReady.value)return;
+ if(searchRequest)return searchRequest;
+ searchError.value='';
+ searchRequest=(async()=>{
+  try{const r=await fetch(withBase('/data/program-search.json'));if(!r.ok)throw Error();searchText.value=await r.json();searchReady.value=true;}
+  catch{searchError.value='全文搜索资料暂时加载失败，请重试，或清除关键词后按条件筛选。';}
+  finally{searchRequest=null;}
+ })();
+ return searchRequest;
+}
 const onPopState=()=>restore(true);
 onMounted(()=>{load();window.addEventListener('popstate',onPopState)});
 onUnmounted(()=>window.removeEventListener('popstate',onPopState));
 watch(()=>filters.region,()=>{if(filters.school&&!schools.value.some(s=>s.id===filters.school))filters.school='';});
 watch(filters,()=>{page.value=1;syncUrl();});
+watch(()=>filters.q,q=>{if(q.trim())ensureSearch();});
 watch(savedOnly,()=>{page.value=1;syncUrl();});
 watch(pages,()=>{if(page.value>pages.value)page.value=pages.value;});
 watch(selected,()=>{
@@ -129,14 +145,15 @@ async function turnPage(delta){page.value+=delta;await nextTick();resultsEl.valu
  </div>
  <div class="chips" aria-label="培养方向"><button :class="{active:!filters.tag}" :aria-pressed="!filters.tag" @click="filters.tag=''">全部方向</button><button v-for="c in categories" :key="c" :class="{active:filters.tag===c}" :aria-pressed="filters.tag===c" @click="filters.tag=c">{{c}}</button></div>
  <div v-if="activeFilters.length" class="active-filters" aria-label="当前筛选"><span>当前筛选</span><button v-for="[key,label] in activeFilters" :key="key" @click="filters[key]=''" :aria-label="`移除筛选：${label}`">{{label}} <span aria-hidden="true">×</span></button><button class="text-button" @click="reset">全部重置</button></div>
- <div ref="resultsEl" tabindex="-1" class="result-summary"><span role="status">{{loading?'正在加载项目资料…':`找到 ${filtered.length} 个项目 / 培养方向条目`}}</span><button v-if="!savedOnly" class="text-button" @click="share(false)">复制筛选链接</button><button class="text-button" :disabled="loading||!filtered.length" @click="exportResults">导出当前结果 CSV ↓</button><a :href="withBase('/data/programs.csv')" download>完整索引 CSV ↓</a></div>
+ <div ref="resultsEl" tabindex="-1" class="result-summary"><span role="status">{{loading?'正在加载项目资料…':searchPending?'正在加载全文搜索资料…':searchFailed?'全文搜索暂时不可用':error?'项目资料暂时不可用':`找到 ${filtered.length} 个项目 / 培养方向条目`}}</span><button v-if="!savedOnly" class="text-button" @click="share(false)">复制筛选链接</button><button class="text-button" :disabled="!resultsReady||!filtered.length" @click="exportResults">导出当前结果 CSV ↓</button><a :href="withBase('/data/programs.csv')" download>完整索引 CSV ↓</a></div>
  <p v-if="note" role="status" class="explorer-feedback">{{note}}</p>
  <div v-if="selected.length" class="selection-bar"><div><strong>已选 {{selected.length}} / 4</strong><span v-if="selected.length===1"> · 再选一个项目开始对比</span><div class="selected-tags"><button v-for="p in picked" :key="p.id" @click="toggle(p.id)" :aria-label="`移除对比：${p.school} ${p.title}`">{{p.school}} · {{p.title.slice(0,16)}} ×</button></div></div><div class="tray-actions"><button class="text-button" @click="selected=[];closeCompare()">清空</button><button class="button primary" :disabled="selected.length<2" @click="compare">{{showCompare?'返回对比表':'开始对比'}} →</button></div></div>
  <section v-if="showCompare&&picked.length" id="comparison" ref="comparisonEl" tabindex="-1" class="comparison">
   <ProgramComparison :picked="picked" :details="details" :errors="detailErrors" :pending="detailLoading" @remove="toggle" @retry="fetchSchool" @share="share(true)" @close="closeCompare" />
  </section>
  <div v-if="error" class="empty-state" role="alert">{{error}} <button class="button secondary" @click="load">重试加载项目</button></div>
- <div class="program-grid"><article v-for="p in visible" :key="p.id" class="program-card" :class="{selected:selected.includes(p.id)}">
+ <div v-if="searchFailed" class="empty-state" role="alert">{{searchError}} <button class="button secondary" @click="ensureSearch">重试全文搜索</button><button class="text-button" @click="filters.q=''">清除关键词</button></div>
+ <div v-if="resultsReady" class="program-grid"><article v-for="p in visible" :key="p.id" class="program-card" :class="{selected:selected.includes(p.id)}">
   <div class="school-card-top"><span>{{p.school}}</span><span class="region-mini">{{p.regionName}}</span></div>
   <div class="program-save-row"><SaveProgram :id="p.id" :title="`${p.school} ${p.title}`" /></div>
   <a :href="withBase(p.url)"><h2>{{p.title}}</h2></a><p class="program-dept">{{p.department}}</p>
@@ -145,7 +162,7 @@ async function turnPage(delta){page.value+=delta;await nextTick();resultsEl.valu
   <div class="program-meta">参考 {{p.years?.join(' / ')}} · 核验 {{p.verified}}</div>
   <div class="school-links"><a :href="withBase(p.url)">查看项目详情 ↗</a><button @click="toggle(p.id)" :aria-label="`${selected.includes(p.id)?'移除':'加入'}对比：${p.school} ${p.title}`" :aria-pressed="selected.includes(p.id)">{{selected.includes(p.id)?'✓ 已加入对比':'+ 加入对比'}}</button></div>
  </article></div>
- <div v-if="!loading&&!error&&!filtered.length" class="empty-state"><h2>{{savedOnly&&!favorites.length?'还没有收藏项目':'没有找到匹配条目'}}</h2><p>{{savedOnly&&!favorites.length?'浏览项目时点“☆ 收藏”，之后可在这里继续筛选和对比。也可以导入已有备份。':'可以移除上方单个筛选条件，或试试“待核验”“多种 / 范围学制”。'}}</p><button class="button secondary" @click="reset">{{savedOnly&&!favorites.length?'浏览全部项目':'清除筛选'}}</button></div>
- <nav v-if="!loading&&filtered.length" class="pagination" aria-label="项目分页"><button :disabled="page===1" @click="turnPage(-1)">← 上一页</button><span>{{page}} / {{pages}}</span><button :disabled="page===pages" @click="turnPage(1)">下一页 →</button></nav>
+ <div v-if="resultsReady&&!filtered.length" class="empty-state"><h2>{{savedOnly&&!favorites.length?'还没有收藏项目':'没有找到匹配条目'}}</h2><p>{{savedOnly&&!favorites.length?'浏览项目时点“☆ 收藏”，之后可在这里继续筛选和对比。也可以导入已有备份。':'可以移除上方单个筛选条件，或试试“待核验”“多种 / 范围学制”。'}}</p><button class="button secondary" @click="reset">{{savedOnly&&!favorites.length?'浏览全部项目':'清除筛选'}}</button></div>
+ <nav v-if="resultsReady&&filtered.length" class="pagination" aria-label="项目分页"><button :disabled="page===1" @click="turnPage(-1)">← 上一页</button><span>{{page}} / {{pages}}</span><button :disabled="page===pages" @click="turnPage(1)">下一页 →</button></nav>
 </div>
 </template>

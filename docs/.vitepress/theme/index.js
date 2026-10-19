@@ -5,6 +5,7 @@ import Explorer from './components/Explorer.vue';
 import Timelines from './components/Timelines.vue';
 import Alumni from './components/Alumni.vue';
 import SchoolDownloads from './components/SchoolDownloads.vue';
+import SchoolNavigator from './components/SchoolNavigator.vue';
 import SaveProgram from './components/SaveProgram.vue';
 import './style.css';
-export default {...DefaultTheme,enhanceApp({app}){app.component('SaveProgram',SaveProgram);app.component('Home',Home);app.component('Alumni',Alumni);app.component('SchoolDownloads',SchoolDownloads);app.component('SchoolGrid',SchoolGrid);app.component('Explorer',Explorer);app.component('Timelines',Timelines)}};
+export default {...DefaultTheme,enhanceApp({app}){app.component('SchoolNavigator',SchoolNavigator);app.component('SaveProgram',SaveProgram);app.component('Home',Home);app.component('Alumni',Alumni);app.component('SchoolDownloads',SchoolDownloads);app.component('SchoolGrid',SchoolGrid);app.component('Explorer',Explorer);app.component('Timelines',Timelines)}};

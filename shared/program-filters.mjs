@@ -10,8 +10,8 @@ export function readFilters(params,catalog) {
   for(const [key,options] of [['tag',categories],['duration',durationOptions.map(x=>x[0])],['route',routeOptions.map(x=>x[0])]])if(options.includes(params.get(key)))f[key]=params.get(key);
   return f;
 }
-export function matchesProgram(p,f) {
-  return (!f.region||p.region===f.region)&&(!f.school||p.schoolId===f.school)&&(!f.tag||p.tags.includes(f.tag))&&(!f.duration||p.facts.duration.category===f.duration)&&(!f.route||(f.route==='unknown'?p.facts.routes.uncertain:p.facts.routes.values.includes(f.route)))&&f.q.trim().toLowerCase().split(/\s+/).filter(Boolean).every(q=>(p.school+' '+p.search).toLowerCase().includes(q));
+export function matchesProgram(p,f,searchText=p.search||'') {
+  return (!f.region||p.region===f.region)&&(!f.school||p.schoolId===f.school)&&(!f.tag||p.tags.includes(f.tag))&&(!f.duration||p.facts.duration.category===f.duration)&&(!f.route||(f.route==='unknown'?p.facts.routes.uncertain:p.facts.routes.values.includes(f.route)))&&f.q.trim().toLowerCase().split(/\s+/).filter(Boolean).every(q=>(p.school+' '+searchText).toLowerCase().includes(q));
 }
 export function selectedIds(value,all) {
   return [...new Set(Array.isArray(value)?value:[])].filter(id=>typeof id==='string'&&all.some(p=>p.id===id)).slice(0,4);

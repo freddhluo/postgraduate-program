@@ -112,6 +112,7 @@ export function schoolPage(s, entries, content, getSection, alumni) {
     `<div class="school-facts"><span>${escape(s.country_or_region)}</span><span>${entries.length} 个项目 / 培养方向</span><span>面向 ${s.target_intake_year} 年入学准备</span></div>`,
     `从${intro}等方向了解这所大学。先用下表找方向，再展开项目的课程、申请与费用信息。`,
     `<p class="edition-note">招生资料参考 ${s.reference_intake_years.join(' / ')} 年入学批次，具体日期与费用保留各自年份。请按目标入学届别查看招生通知。资料检索：${s.last_verified_on}。</p>`,
+    '<SchoolNavigator />',
     `## 项目速览 {#program-overview}`];
   const overview=['| 项目 | 院系与学制 | 培养重点 |', '|---|---|---|'];
   for (const p of entries) {
@@ -140,7 +141,7 @@ export function schoolPage(s, entries, content, getSection, alumni) {
       const fields=keys.flatMap(k=>g[k]);
       if(fields.length) lines.push(`<details class="program-detail"><summary>${label}</summary>\n\n${renderFields(fields)}\n</details>`);
     }
-    lines.push(`<div class="program-compare">\n\n<SaveProgram id="${p.id}" title="${escape(p.title)}" />\n\n[加入跨校对比 →](/programs.html?add=${p.id}) · [查看收藏清单](/programs.html?saved=1)\n\n</div>`);
+    lines.push(`<div class="program-compare">\n\n<SaveProgram id="${p.id}" title="${escape(p.title)}" />\n\n[加入跨校对比 →](/programs.html?add=${p.id}) · [查看收藏清单](/programs.html?saved=1) · [返回项目导航 ↑](#school-program-navigation)\n\n</div>`);
   }
   const timeline=timelineText(getSection(content,4));
   lines.push('## 申请时间线 {#application-timeline}', `以下是对应年份的申请节点；2028 年入学准备可结合[全站时间线](/timeline.html?school=${s.id}#school-dates)安排。`, timeline);

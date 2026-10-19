@@ -27,6 +27,12 @@ assert.deepEqual(routeFact('仅推免；不接受统考','china-mainland').value
 assert.deepEqual(routeFact('自主网申；按项目英语要求','china-mainland').values,['application']);
 assert.deepEqual(routeFact('若通过本院金融专硕统考，关注101/201/396/431（组合待核）；不应将旧公告的项目内部遴选误写为独立研究生统考。','china-mainland').values,[]);
 const index=JSON.parse(fs.readFileSync('docs/public/data/program-index.json'));
+const searchText=JSON.parse(fs.readFileSync('docs/public/data/program-search.json'));
+assert.equal(Object.keys(searchText).length,programs.length);
+for(const q of ['Python','431','GRE','金融工程','GRE Python','__not_a_program__']) {
+ const f={...emptyFilters(),q};
+ assert.deepEqual(index.filter(p=>matchesProgram(p,f,searchText[p.id])).map(p=>p.id),programs.filter(p=>matchesProgram(p,f)).map(p=>p.id),'lazy full-text search changed: '+q);
+}
 const allowed=index.map(p=>p.id),savedSample=['au-unimelb-p005','au-unsw-p009'];
 assert.deepEqual(savedIds([savedSample[0],savedSample[0],42,'__proto__','not-a-program']),[savedSample[0]]);
 assert.deepEqual(readFavoriteBackup(favoriteBackup(savedSample),allowed),savedSample);
@@ -43,12 +49,13 @@ const csv=programCsv([{...index[0],title:'=SUM(1,2)',department:'含"引号",逗
 assert.ok(csv.startsWith('\ufeff')&&csv.includes('"\'=SUM(1,2)"')&&csv.includes('"含""引号"",逗号\n换行"'));
 assert.ok(csv.includes('https://example.org'+index[0].url));
 assert.equal(index.length,programs.length);
-assert.ok(fs.statSync('docs/public/data/program-index.json').size<fs.statSync('docs/public/data/programs.json').size*.6,'explorer index should exclude full detail payload');
+assert.ok(fs.statSync('docs/public/data/program-index.json').size<fs.statSync('docs/public/data/programs.json').size*.25,'explorer index should exclude full text and detail payload');
 for(const p of index){
- assert.ok(!p.fields && !p.overview,'full details leaked into index');
+ assert.ok(!p.fields && !p.overview && !Object.hasOwn(p,'search'),'full text leaked into index');
  assert.ok(durationOptions.some(([id])=>id===p.facts.duration.category));
  const detail=JSON.parse(fs.readFileSync(`docs/public/data/program-details/${p.schoolId}.json`))[p.id];
  const original=programs.find(x=>x.id===p.id);
+ assert.equal(searchText[p.id],original.search,'search text changed for '+p.id);
  assert.deepEqual(detail.fields,original.fields,'detail text changed for '+p.id);
  assert.deepEqual(detail.sources,original.sources,'source links changed for '+p.id);
 }

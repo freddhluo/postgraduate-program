@@ -56,15 +56,16 @@ for(const file of walk('schools').filter(f=>f.endsWith('.md')).sort()){
  const t=section(content,4);timeline.push({schoolId:sid,school:s.name,region:s.region,path:s.path+'#application-timeline',html:html(timelineText(t))});
  const generated=schoolPage(s,schoolPrograms,content,section,alumni);
  const dest='docs'+s.path.replace(/\.html$/,'.md');fs.mkdirSync(path.dirname(dest),{recursive:true});
- const fm={...m,title:s.name+' · 硕士项目与申请',description:s.name+'的项目方向、课程、申请要求、费用和时间线',pageClass:'student-school',outline:2,pdf:s.pdf,sourceMd:s.md,program_count:s.count};
+ const fm={...m,title:s.name+' · 硕士项目与申请',description:s.name+'的项目方向、课程、申请要求、费用和时间线',pageClass:'student-school',outline:2,pdf:s.pdf,sourceMd:s.md,program_count:s.count,program_navigation:schoolPrograms.map(({id,title,department,focus})=>({id,title,department,focus}))};
  fs.writeFileSync(dest,matter.stringify(generated,fm));fs.writeFileSync('docs/public/markdown/'+sid+'.md',raw);schools.push(s);
 }
 if(new Set(programs.map(p=>p.id)).size!==programs.length)throw Error('重复项目ID');
 const data={schools,regions,programCount:programs.length,sourceCount:schools.reduce((n,s)=>n+s.sources,0),assembledOn:'2026-10-19',issues};
 fs.writeFileSync('data/catalog.json',JSON.stringify(data,null,2));fs.writeFileSync('docs/public/data/programs.json',JSON.stringify(programs));fs.writeFileSync('docs/public/data/timelines.json',JSON.stringify(timeline));
-// The explorer loads searchable summaries first; full, linked text is fetched
-// only for the schools included in a comparison.
-fs.writeFileSync('docs/public/data/program-index.json',JSON.stringify(programs.map(({fields,overview,sources,...p})=>p)));
+// Load compact summaries first, full-text search on the first keyword query,
+// and linked detail text only for schools included in a comparison.
+fs.writeFileSync('docs/public/data/program-index.json',JSON.stringify(programs.map(({fields,overview,sources,search,...p})=>p)));
+fs.writeFileSync('docs/public/data/program-search.json',JSON.stringify(Object.fromEntries(programs.map(p=>[p.id,p.search]))));
 fs.mkdirSync('docs/public/data/program-details',{recursive:true});
 for(const s of schools)fs.writeFileSync(`docs/public/data/program-details/${s.id}.json`,JSON.stringify(Object.fromEntries(programs.filter(p=>p.schoolId===s.id).map(p=>[p.id,{fields:p.fields,sources:p.sources}]))));
 const columns=['school_id','program_id','school_name','region','program_name','department','degree_duration','focus','admissions','reference_intake_years','last_verified_on','report_status','source_urls','markdown_path','duration_category','admission_routes','routes_need_review'];
