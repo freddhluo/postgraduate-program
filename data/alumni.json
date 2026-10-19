@@ -1,0 +1,401 @@
+{
+  "checkedOn": "2026-10-19",
+  "cases": [
+    {
+      "id": "zhang-jinyang",
+      "name": "张锦杨",
+      "cohort": "2025届本科",
+      "major": "金融数学",
+      "category": "境内升学",
+      "route": "升学",
+      "schoolId": "cn-tsinghua",
+      "schoolIds": [
+        "cn-tsinghua"
+      ],
+      "destination": "清华大学 · 金融硕士",
+      "takeaway": "通过数学基础学习、统计建模和市场调查竞赛积累研究与实践能力。",
+      "source": "https://tongji.uibe.edu.cn/zsjy/byszf/f9f60eb903cb4d2c863f70e0a486b40c.htm",
+      "published": "2025-06-19",
+      "offers": []
+    },
+    {
+      "id": "fu-wanjue",
+      "name": "傅宛珏",
+      "cohort": "2022届本科",
+      "major": "经济统计学",
+      "category": "境内升学",
+      "route": "推免",
+      "schoolId": "cn-tsinghua",
+      "schoolIds": [
+        "cn-tsinghua",
+        "us-columbia"
+      ],
+      "destination": "清华—哥伦比亚大学 · 商务分析双学位硕士",
+      "takeaway": "补充 C++、Matlab 基础，通过数据运营与证券实习明确商务分析方向。",
+      "source": "https://tongji.uibe.edu.cn/zsjy/byszf/810ca2a1967b4ef082285a76a34f93d7.htm",
+      "published": "2022-06-15",
+      "offers": [],
+      "jointSchoolIds": [
+        "us-columbia"
+      ]
+    },
+    {
+      "id": "guo-jiayun",
+      "name": "郭嘉芸",
+      "cohort": "2025届本科",
+      "major": "经济统计学",
+      "category": "境内升学",
+      "route": "推免",
+      "schoolId": "cn-pku",
+      "schoolIds": [
+        "cn-pku"
+      ],
+      "destination": "北京大学汇丰商学院 · 金融硕士（数量与金融科技方向）",
+      "takeaway": "在专业学习、竞赛与实践中逐步明确外校推免目标。",
+      "source": "https://tongji.uibe.edu.cn/zsjy/byszf/b970a72a73144191ab3ee039d116b52b.htm",
+      "published": "2025-06-17",
+      "offers": []
+    },
+    {
+      "id": "mu-sitong",
+      "name": "穆思彤",
+      "cohort": "2026届本科",
+      "major": "金融数学",
+      "category": "境内升学",
+      "route": "推免",
+      "schoolId": "cn-ruc",
+      "schoolIds": [
+        "cn-ruc"
+      ],
+      "destination": "中国人民大学国际金融学院 · 金融科技硕士",
+      "takeaway": "将统计建模、科研实习与互联网业务实践衔接起来，探索金融科技。",
+      "source": "https://tongji.uibe.edu.cn/zsjy/byszf/21db9af6d0d141eb87cd1c4008253c68.htm",
+      "published": "2026-06-22",
+      "offers": []
+    },
+    {
+      "id": "liu-xin",
+      "name": "刘鑫",
+      "cohort": "2026届本科",
+      "major": "统计学",
+      "category": "境内升学",
+      "route": "统考",
+      "schoolId": "cn-fudan",
+      "schoolIds": [
+        "cn-fudan"
+      ],
+      "destination": "复旦大学 · 统计学硕士",
+      "takeaway": "关注数学、统计与编程基础的持续积累。",
+      "source": "https://tongji.uibe.edu.cn/zsjy/byszf/0810a34d1c4d4f3c96d0bff1be065cbf.htm",
+      "published": "2026-06-22",
+      "offers": []
+    },
+    {
+      "id": "li-jialu",
+      "name": "李佳潞",
+      "cohort": "2026届本科",
+      "major": "经济统计学",
+      "category": "境内升学",
+      "route": "升学",
+      "schoolId": "cn-uibe",
+      "schoolIds": [
+        "cn-uibe"
+      ],
+      "destination": "对外经济贸易大学统计学院 · 应用统计硕士",
+      "takeaway": "在数理基础、建模竞赛与社会实践中逐步建立专业信心。",
+      "source": "https://tongji.uibe.edu.cn/zsjy/byszf/6fb89aaf537c40a4b9d0960d73e7578d.htm",
+      "published": "2026-06-15",
+      "offers": []
+    },
+    {
+      "id": "li-huitong",
+      "name": "李慧彤",
+      "cohort": "2026届本科",
+      "major": "经济统计学",
+      "category": "境内升学",
+      "route": "推免",
+      "schoolId": "cn-uibe",
+      "schoolIds": [
+        "cn-uibe"
+      ],
+      "destination": "对外经济贸易大学统计学院 · 应用统计硕士",
+      "takeaway": "结合科研项目和金融机构实习，认识统计分析的应用场景。",
+      "source": "https://tongji.uibe.edu.cn/zsjy/byszf/355a31312243404fa54c28a7f2bafafe.htm",
+      "published": "2026-06-15",
+      "offers": []
+    },
+    {
+      "id": "zong-shikun",
+      "name": "宗士堃",
+      "cohort": "2026届本科",
+      "major": "统计学",
+      "category": "境内升学",
+      "route": "统考",
+      "schoolId": "cn-uibe",
+      "schoolIds": [
+        "cn-uibe"
+      ],
+      "destination": "对外经济贸易大学统计学院 · 应用统计硕士",
+      "takeaway": "从大三上系统复习初试内容，反复梳理教材和错题，同时保持课内专业学习。",
+      "source": "https://tongji.uibe.edu.cn/zsjy/byszf/39c47dfaba544f58b72e507918750c7a.htm",
+      "published": "2026-06-29",
+      "offers": []
+    },
+    {
+      "id": "song-zhuoyan",
+      "name": "宋卓妍",
+      "cohort": "2026届本科",
+      "major": "经济统计学",
+      "category": "境外升学",
+      "route": "申请制",
+      "schoolId": "sg-nus",
+      "schoolIds": [
+        "sg-nus",
+        "sg-ntu",
+        "hk-cuhk",
+        "hk-hkust"
+      ],
+      "destination": "新加坡国立大学 · 可持续数据科学",
+      "takeaway": "从提前批开始申请，结合金融与制造业实习体验，比较不同专业方向。",
+      "source": "https://tongji.uibe.edu.cn/zsjy/byszf/36ff1ead0eb64979bf7ee7d777ae9f83.htm",
+      "published": "2026-06-22",
+      "offers": [
+        {
+          "schoolId": "sg-nus",
+          "school": "新加坡国立大学",
+          "program": "统计学"
+        },
+        {
+          "schoolId": "sg-ntu",
+          "school": "南洋理工大学",
+          "program": "应用经济学、管理经济学"
+        },
+        {
+          "schoolId": "hk-cuhk",
+          "school": "香港中文大学",
+          "program": "经济学"
+        },
+        {
+          "schoolId": "hk-hkust",
+          "school": "香港科技大学",
+          "program": "经济学"
+        }
+      ]
+    },
+    {
+      "id": "song-wanrong",
+      "name": "宋婉蓉",
+      "cohort": "2019级本科 · 2023年分享",
+      "major": "金融数学",
+      "category": "境外升学",
+      "route": "申请制",
+      "schoolId": "sg-nus",
+      "schoolIds": [
+        "sg-nus"
+      ],
+      "destination": "新加坡国立大学 · 金融工程",
+      "takeaway": "从课程、实习、科研、交换和竞赛中提炼文书主线，留意申请轮次与截止时间。",
+      "source": "https://tongji.uibe.edu.cn/xsyd/tzgg_xsyd/0fb0a9bc644c41398fee6ef3e3c93d40.htm",
+      "published": "2023-05-12",
+      "offers": []
+    },
+    {
+      "id": "fan-yujia",
+      "name": "范雨佳",
+      "cohort": "2026届本科",
+      "major": "统计学",
+      "category": "境外升学",
+      "route": "申请制",
+      "schoolId": "us-yale",
+      "schoolIds": [
+        "us-yale",
+        "us-columbia",
+        "us-cornell",
+        "us-berkeley",
+        "us-cmu"
+      ],
+      "destination": "耶鲁大学 · 深造",
+      "takeaway": "申请统计、数据科学和量化金融方向，通过科研、实习与竞赛探索兴趣。",
+      "source": "https://tongji.uibe.edu.cn/zsjy/byszf/d1bee622ec584aaba7f797a5f194a19f.htm",
+      "published": "2026-06-08",
+      "offers": [
+        {
+          "schoolId": "us-columbia",
+          "school": "哥伦比亚大学",
+          "program": "专访合并列举统计、数据科学、量化金融方向"
+        },
+        {
+          "schoolId": "us-cornell",
+          "school": "康奈尔大学",
+          "program": "专访合并列举统计、数据科学、量化金融方向"
+        },
+        {
+          "schoolId": "us-berkeley",
+          "school": "加州大学伯克利分校",
+          "program": "专访合并列举统计、数据科学、量化金融方向"
+        },
+        {
+          "schoolId": "us-cmu",
+          "school": "卡内基梅隆大学",
+          "program": "专访合并列举统计、数据科学、量化金融方向"
+        }
+      ],
+      "offerNote": "原文合并列出录取院校与专业方向，未逐校对应具体项目。"
+    },
+    {
+      "id": "he-can",
+      "name": "何灿",
+      "cohort": "2026届本科",
+      "major": "统计学",
+      "category": "境外升学",
+      "route": "申请制",
+      "schoolId": "us-stanford",
+      "schoolIds": [
+        "us-stanford",
+        "us-columbia",
+        "us-berkeley"
+      ],
+      "destination": "斯坦福大学 · 管理科学与工程",
+      "takeaway": "提前规划语言考试与 GRE，为申请季的课程、实习、科研和材料准备留出时间。",
+      "source": "https://tongji.uibe.edu.cn/zsjy/byszf/46477861d72146ecb1be164b472759bb.htm",
+      "published": "2026-06-15",
+      "offers": [
+        {
+          "schoolId": "us-columbia",
+          "school": "哥伦比亚大学",
+          "program": "运筹学"
+        },
+        {
+          "schoolId": "us-berkeley",
+          "school": "加州大学伯克利分校",
+          "program": "分析学"
+        }
+      ]
+    }
+  ],
+  "employment": [
+    {
+      "id": "jiang-yufan",
+      "name": "蒋雨帆",
+      "cohort": "2025届硕士",
+      "major": "统计学（经济学）",
+      "destination": "华夏银行总行",
+      "role": "数学统计管培生",
+      "takeaway": "从银行业务、风控合规到财务部门实习，逐步明确岗位目标。",
+      "source": "https://tongji.uibe.edu.cn/zsjy/byszf/7e60589ce20b4ae989f03c73a71abcb8.htm",
+      "published": "2025-06-26"
+    },
+    {
+      "id": "huang-bianbian",
+      "name": "黄辫辫",
+      "cohort": "2018届硕士",
+      "major": "统计学",
+      "destination": "国家统计局中国经济景气监测中心",
+      "role": "宏观经济监测、调查与研究",
+      "source": "https://news.uibe.edu.cn/info/1370/132088.htm",
+      "published": "2026-04-17"
+    },
+    {
+      "id": "xie-junchao",
+      "name": "谢俊超",
+      "cohort": "2018届硕士",
+      "major": "应用统计",
+      "destination": "国家统计局",
+      "role": "价格统计调查",
+      "source": "https://news.uibe.edu.cn/info/1370/132088.htm",
+      "published": "2026-04-17"
+    },
+    {
+      "id": "nan-ding",
+      "name": "楠丁",
+      "cohort": "2019届硕士",
+      "major": "应用统计",
+      "destination": "国家统计局数管中心",
+      "role": "统计信息化与数据管理",
+      "source": "https://news.uibe.edu.cn/info/1370/132088.htm",
+      "published": "2026-04-17"
+    },
+    {
+      "id": "wang-yameng",
+      "name": "王亚萌",
+      "cohort": "2022届硕士",
+      "major": "应用统计",
+      "destination": "国家统计局直属事业单位",
+      "role": "社情民意调查",
+      "source": "https://news.uibe.edu.cn/info/1370/132088.htm",
+      "published": "2026-04-17"
+    },
+    {
+      "id": "hu-xiaoqi",
+      "name": "呼晓琦",
+      "cohort": "2024届硕士",
+      "major": "应用统计",
+      "destination": "国家统计局社情民意调查中心",
+      "role": "社情民意调查与数据支持",
+      "source": "https://news.uibe.edu.cn/info/1370/132088.htm",
+      "published": "2026-04-17"
+    },
+    {
+      "id": "gao-yifan",
+      "name": "高一帆",
+      "cohort": "2025届硕士",
+      "major": "应用统计",
+      "destination": "国家统计局直属事业单位",
+      "role": "统计研究",
+      "source": "https://news.uibe.edu.cn/info/1370/132088.htm",
+      "published": "2026-04-17"
+    },
+    {
+      "id": "wang-zhiyuan",
+      "name": "王之媛",
+      "cohort": "2025届硕士",
+      "major": "应用统计",
+      "destination": "国家统计局数据管理中心",
+      "role": "调查系统建设与支持",
+      "source": "https://news.uibe.edu.cn/info/1370/132088.htm",
+      "published": "2026-04-17"
+    }
+  ],
+  "history": {
+    "published": "2021-06-25",
+    "source": "https://tongji.uibe.edu.cn/zsjy/jyxx/4e4280bebf164ec0abd0a2d52df860bd.htm",
+    "scope": "学院历届毕业生汇总，覆盖不同学历层次",
+    "schools": [
+      "清华大学",
+      "北京大学",
+      "复旦大学",
+      "上海交通大学",
+      "中国人民大学",
+      "中国科学院大学",
+      "上海财经大学",
+      "对外经济贸易大学",
+      "耶鲁大学",
+      "哥伦比亚大学",
+      "杜克大学",
+      "曼彻斯特大学",
+      "约翰斯·霍普金斯大学",
+      "普渡大学",
+      "格罗宁根大学",
+      "悉尼大学",
+      "新加坡国立大学"
+    ],
+    "sectors": [
+      {
+        "name": "银行",
+        "employers": "工行、建行、农行、中行、招商银行、国家开发银行等"
+      },
+      {
+        "name": "科技与互联网",
+        "employers": "华为、字节跳动、京东、滴滴、网易、美团、快手等"
+      },
+      {
+        "name": "证券、保险及专业服务",
+        "employers": "中金公司、中信建投、中国再保险、中国出口信用保险、安永等"
+      },
+      {
+        "name": "公共部门与央企国企",
+        "employers": "国家统计局、中国人民银行、中国银联、中国石化、中国联通等"
+      }
+    ]
+  }
+}

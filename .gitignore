@@ -4,3 +4,12 @@ docs/.vitepress/dist/
 .vercel/
 .env*
 .DS_Store
+
+# Rebuilt from schools/ and data/alumni.json before every deployment
+/docs/schools/
+/docs/public/data/
+/docs/public/markdown/
+/data/catalog.json
+/data/programs.csv
+.wrangler/
+.dev.vars*

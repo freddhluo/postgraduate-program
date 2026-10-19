@@ -2,10 +2,23 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import assert from 'node:assert/strict';
+import {studentText} from './student-content.mjs';
 const catalog=JSON.parse(fs.readFileSync('data/catalog.json'));
 const programs=JSON.parse(fs.readFileSync('docs/public/data/programs.json'));
 const timelines=JSON.parse(fs.readFileSync('docs/public/data/timelines.json'));
 const dist='docs/.vitepress/dist',base=process.env.SITE_BASE||'/';
+const alumni=JSON.parse(fs.readFileSync('data/alumni.json'));
+assert.equal(studentText('项目级就业率官网未公开。'),'');
+assert.ok(studentText('2027年学费12.8万元；2028年费用待核验。').includes('12.8万元'));
+assert.ok(studentText('开学前至少2年毕业后全职工作经验，本科实习不算。').includes('本科实习不算'));
+const alumniPage=fs.readFileSync(dist+'/alumni.html','utf8');
+const people=[...alumni.cases,...alumni.employment];
+assert.equal(new Set(people.map(a=>a.id)).size,people.length);
+for(const a of people){
+ assert.ok(alumniPage.includes(`id="${a.id}"`),a.id+' missing alumni anchor');
+ assert.match(a.source,/^https:\/\/(tongji|news)\.uibe\.edu\.cn\//);
+ for(const id of a.schoolIds||[])assert.ok(catalog.schools.some(s=>s.id===id),'unknown alumni school '+id);
+}
 assert.equal(programs.length,catalog.programCount);assert.equal(new Set(programs.map(p=>p.id)).size,programs.length);
 for(const s of catalog.schools){
  const src=fs.readFileSync(`schools/${s.region}/${s.id}.md`);
@@ -15,6 +28,10 @@ for(const s of catalog.schools){
  assert.ok(timelines.find(t=>t.schoolId===s.id)?.html.length>20);
  const page=fs.readFileSync(dist+s.path,'utf8');assert.ok(page.includes(s.name));
  assert.ok(page.includes('application-timeline'));
+ assert.ok(page.includes('program-overview'));
+ assert.ok(page.includes('program-details'));
+ assert.ok(!page.includes('调研草稿'),'research status leaked into student page');
+ assert.ok(!page.includes('本次整合'),'build process leaked into student page');
  if(s.pdf){assert.ok(fs.readFileSync('docs/public'+s.pdf).subarray(0,5).toString()==='%PDF-');assert.ok(fs.existsSync(dist+s.pdf));}
  for(const p of programs.filter(p=>p.schoolId===s.id)){
   assert.ok(page.includes(`id="${p.id}"`),p.id+' anchor missing');

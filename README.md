@@ -1,13 +1,14 @@
 # 升学图谱 · 金融数学研究生项目知识库
 
-面向对外经济贸易大学统计学院金融数学专业本科生的班会分享网站。目标入学年份为 2028，整合 42 所大学、457 个项目 / 培养方向条目。保留报告的实际参考届别、原始来源、核验日期与草稿状态。
+面向对外经济贸易大学统计学院金融数学专业本科生的班会分享网站。目标入学年份为 2028，整合 42 所大学、457 个项目 / 培养方向条目。以学生阅读为主线，保留信息对应年份和官方链接。
 
 ## 网站功能
 
-- 分地区院校导航、一校一页完整报告、章节目录。
+- 分地区院校导航、一校一页项目速览、培养与申请详情、申请日程。
 - 全站本地全文搜索，项目全文关键词、地区、学校和方向筛选。
 - 最多四个项目并列对比；保留申请要求、课程、费用和就业数据的原文依据；支持分享对比链接。
 - 2028 入学准备节奏，以及各校报告原有申请日程。
+- 学长学姐去向：12 个本科升学案例与 8 个硕士就业案例，区分最终选择和其他录取。
 - 每校 Markdown / PDF 下载，自动生成跨校 CSV 索引。
 - 响应式布局、深色模式、键盘操作、静态网站，无数据库。
 
@@ -30,7 +31,9 @@ npm run preview
 
 ## 内容维护
 
-`schools/<region>/<school_id>.md` 是唯一内容主文件。`docs/schools/` 为自动生成页面，请勿直接编辑。所有原始报告保持八章结构与稳定项目 ID。
+`schools/<region>/<school_id>.md` 是单校内容主文件；`data/alumni.json` 维护毕业去向案例；`sources/statistics-alumni-summary.md` 留存用户提供的汇总。`docs/schools/` 为自动生成页面，请勿直接编辑。所有原始报告保持八章结构与稳定项目 ID。
+
+`docs/schools/`、`docs/public/data/`、`docs/public/markdown/` 和 `data/catalog.json`、`data/programs.csv` 均由构建生成，不提交到版本库。调研规范保留在 `ops/research-guide.md`，不进入学生网站。
 
 新增或修改报告后运行 `npm run build`；构建会重新生成页面、项目检索数据、时间线和 `data/programs.csv`。新增学校会自动加入导航。
 
@@ -53,6 +56,10 @@ PDF 放在 `docs/public/pdf/<school_id>.pdf`。当前 PDF 是与报告一起提�
 - Vercel 根域部署不设置 `SITE_BASE`（默认 `/`）。
 
 关联仓库后，推送到生产分支 main 会触发 Vercel 构建。
+
+## Cloudflare Pages
+
+参见 [Cloudflare Pages 发布配置](ops/cloudflare-pages.md)。构建命令 `npm run build && npm run check`，输出目录 `docs/.vitepress/dist`；`.node-version` 和 `wrangler.jsonc` 已提供。关联同一 GitHub 仓库后可自动同步发布。
 
 ## GitHub Pages
 

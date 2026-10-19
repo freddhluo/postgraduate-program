@@ -3,6 +3,8 @@ import path from 'node:path';
 import matter from 'gray-matter';
 import MarkdownIt from 'markdown-it';
 import crypto from 'node:crypto';
+import {groupFields,renderFields,schoolPage,timelineText,studentText} from './student-content.mjs';
+const alumni=JSON.parse(fs.readFileSync('data/alumni.json','utf8')).cases;
 const md=new MarkdownIt({html:false,linkify:true});
 const regions={'china-mainland':'中国内地','hong-kong':'中国香港','singapore':'新加坡','united-states':'美国','other':'其他地区'};
 const walk=d=>fs.readdirSync(d,{withFileTypes:true}).flatMap(f=>f.isDirectory()?walk(path.join(d,f.name)):[path.join(d,f.name)]);
@@ -21,7 +23,7 @@ for(const file of walk('schools').filter(f=>f.endsWith('.md')).sort()){
  }
  const projectSection=section(content,3); const chunks=[...projectSection.matchAll(/^### (3\.\d+)\s+([^\n]+)\n([\s\S]*?)(?=^### |$(?![\s\S]))/gm)];
  if(!chunks.length)throw Error('未提取到项目: '+file);
- let generated=content;
+ const schoolPrograms=[];
  for(const [whole,num,title,body] of chunks){
   const id=body.match(new RegExp(sid+'-p\\d{3}'))?.[0];if(!id)throw Error('缺少项目ID: '+file+' '+num);
   const short=id.slice(sid.length+1);
@@ -38,13 +40,22 @@ for(const file of walk('schools').filter(f=>f.endsWith('.md')).sort()){
   const p={id,schoolId:sid,school:s.name,region:m.region,regionName:s.regionName,title:plain(title),department:plain(row?.[1]||'见项目正文'),degree:plain(row?.[2]||'见项目正文'),focus:plain(row?.[3]||''),admission:plain(row?.[4]||admission),overview:row?row.map(html):[],url:s.path+'#'+id,years:m.reference_intake_years,verified:m.last_verified_on,status:m.report_status,fields:{basic:html(basic||row?.[2]||'见项目正文'),admission:html(admission||row?.[4]||'见项目正文'),courses:html(courses||'见项目正文'),fees:html(fees||row?.[5]||'见项目正文'),fit:html(fit||'见项目正文'),dates:html(dates||'详见单校申请时间线，未单列项目日期')},sources,search:plain(title+' '+body)};
   const titleFocus=p.title+' '+p.focus;
   p.tags=[[/金融工程|金融数学|量化|数量金融|Financial Engineering|Mathematics in Finance|Quantitative Finance/i,'量化金融'],[/金融|Finance|Financ/i,'金融与金融科技'],[/统计|Statistics|Statistical|Biostat/i,'统计与应用数学'],[/数据|商业分析|商务分析|Data|Analytics|人工智能/i,'数据与商业分析'],[/经济|Economics|Econometric/i,'经济与计量'],[/管理|运筹|Management|Operations/i,'管理与运筹']].filter(([re])=>re.test(titleFocus)).map(x=>x[1]);
-  programs.push(p);generated=generated.replace('### '+num+' '+title,'### '+num+' '+title+' {#'+id+'}');
+  const groups=groupFields(fields);
+  if(!groups.basic.length && row) groups.basic.push({label:'院系与学制',value:row[1]+'；'+row[2]});
+  for(const key of ['basic','admission','courses','fees','fit','dates']) {
+   const output=renderFields(groups[key]);
+   if(output) p.fields[key]=output;
+   else p.fields[key]='<p>—</p>';
+  }
+  p.degree=plain(studentText(row?.[2]||p.degree));
+  p.focus=plain(studentText(row?.[3]||p.focus));
+  programs.push(p);schoolPrograms.push({...p,row,groups});
  }
  s.count=chunks.length;s.sources=[...new Set([...section(content,7).matchAll(/https?:\/\/[^\s)<>|]+/g)].map(x=>x[0]))].length;
- const t=section(content,4);timeline.push({schoolId:sid,school:s.name,region:m.region,path:s.path+'#application-timeline',html:html(t)});
- generated=generated.replace(/^## 4[^\n]*/m,x=>x+' {#application-timeline}');
+ const t=section(content,4);timeline.push({schoolId:sid,school:s.name,region:m.region,path:s.path+'#application-timeline',html:html(timelineText(t))});
+ const generated=schoolPage(s,schoolPrograms,content,section,alumni);
  const dest='docs'+s.path.replace(/\.html$/,'.md');fs.mkdirSync(path.dirname(dest),{recursive:true});
- const fm={...m,outline:[2,3],pdf:s.pdf,sourceMd:s.md,program_count:s.count};
+ const fm={...m,title:s.name+' · 硕士项目与申请',description:s.name+'的项目方向、课程、申请要求、费用和时间线',pageClass:'student-school',outline:[2,3],pdf:s.pdf,sourceMd:s.md,program_count:s.count};
  fs.writeFileSync(dest,matter.stringify(generated,fm));fs.writeFileSync('docs/public/markdown/'+sid+'.md',raw);schools.push(s);
 }
 if(new Set(programs.map(p=>p.id)).size!==programs.length)throw Error('重复项目ID');
