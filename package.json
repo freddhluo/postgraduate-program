@@ -1,0 +1,22 @@
+{
+  "name": "grad-programs",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "prepare:data": "node scripts/generate.mjs",
+    "dev": "npm run prepare:data && vitepress dev docs",
+    "build": "npm run prepare:data && vitepress build docs",
+    "preview": "vitepress preview docs",
+    "check": "node scripts/check.mjs"
+  },
+  "devDependencies": {
+    "vitepress": "1.6.4",
+    "vue": "3.5.22",
+    "gray-matter": "4.0.3",
+    "markdown-it": "14.1.0"
+  }
+}
