@@ -49,7 +49,7 @@ for(const file of walk('schools').filter(f=>f.endsWith('.md')).sort()){
   }
   p.degree=plain(studentText(row?.[2]||p.degree));
   p.focus=plain(studentText(row?.[3]||p.focus));
-  p.facts=programFacts(p,groups,row);
+  p.facts=programFacts(p,groups,row,fields);
   programs.push(p);schoolPrograms.push({...p,row,groups});
  }
  s.count=chunks.length;s.sources=[...new Set([...section(content,7).matchAll(/https?:\/\/[^\s)<>|]+/g)].map(x=>x[0]))].length;

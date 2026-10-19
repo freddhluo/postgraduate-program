@@ -23,6 +23,7 @@ assert.deepEqual(routeFact('2027首届100%统考，无推免','china-mainland').
 assert.deepEqual(routeFact('推免；统考待核验','china-mainland').values,['recommendation']);
 assert.deepEqual(routeFact('仅推免；不接受统考','china-mainland').values,['recommendation']);
 assert.deepEqual(routeFact('自主网申；按项目英语要求','china-mainland').values,['application']);
+assert.deepEqual(routeFact('若通过本院金融专硕统考，关注101/201/396/431（组合待核）；不应将旧公告的项目内部遴选误写为独立研究生统考。','china-mainland').values,[]);
 const index=JSON.parse(fs.readFileSync('docs/public/data/program-index.json'));
 assert.equal(index.length,programs.length);
 assert.ok(fs.statSync('docs/public/data/program-index.json').size<fs.statSync('docs/public/data/programs.json').size*.6,'explorer index should exclude full detail payload');
@@ -41,6 +42,9 @@ assert.deepEqual(readFilters(new URLSearchParams('region=bad&school=bad&duration
 assert.equal(readFilters(new URLSearchParams('region=australia&school=cn-pku'),catalog).school,'');
 assert.ok(matchesProgram(index.find(p=>p.id==='cn-cufe-p002'),{...emptyFilters(),route:'recommendation'}));
 assert.ok(!matchesProgram(index.find(p=>p.id==='cn-cufe-p002'),{...emptyFilters(),route:'exam'}));
+assert.deepEqual(index.find(p=>p.id==='cn-uibe-p003').facts.routes.values,[]);
+assert.deepEqual(index.find(p=>p.id==='cn-zju-p003').facts.routes.values,[]);
+assert.equal(index.find(p=>p.id==='cn-fudan-p011').facts.routes.uncertain,true);
 assert.deepEqual(selectedIds(['bad',index[0].id,index[0].id,index[1].id],index),[index[0].id,index[1].id]);
 assert.deepEqual(selectedIds({invalid:true},index),[]);
 assert.equal(studentText('项目级就业率官网未公开。'),'');

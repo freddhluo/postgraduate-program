@@ -22,15 +22,16 @@ export function durationFact(value) {
 
 export function routeFact(overview, region, admissionText='') {
   const text=plain(overview),values=[];
+  const unconfirmed=/待核|须核|需查|是否|按培养单位|统考核验|请核|待[^；;。]*确认|不应|不能|误写|不等于|若|如果|院系统一/;
   if(region!=='china-mainland' && /申请|网申|admission|application|上传|SOP|推荐报告|推荐信/i.test(text+' '+admissionText)) values.push('application');
   if(region==='china-mainland') {
     for(const [word,key] of [['推免','recommendation'],['统考','exam']]) {
       const clauses=text.split(/[；;。]/).filter(c=>c.includes(word));
-      if(clauses.some(c=>!new RegExp('(?:无|不(?:接收|招收|接受|参加)?|非)\\s*'+word).test(c) && !/待核|须核|需查|是否|按培养单位|统考核验|请核/.test(c))) values.push(key);
+      if(clauses.some(c=>!new RegExp('(?:无|不(?:接收|招收|接受|参加)?|非)\\s*'+word).test(c) && !unconfirmed.test(c) && !/^\s*(?:见|来源)/.test(c))) values.push(key);
     }
     if(/自主网申|自主招生|直接申请|网申/.test(text) && !/与自主招生不同|非自主招生/.test(text)) values.push('application');
   }
-  const uncertain=text.split(/[；;。]/).some(c=>/推免|统考|网申|申请途径|招生途径/.test(c)&&/待核|须核|需查|是否|按培养单位|统考核验|请核/.test(c)) || values.length===0;
+  const uncertain=text.split(/[；;。]/).some(c=>/推免|统考|网申|申请途径|招生途径/.test(c)&&unconfirmed.test(c)) || values.length===0;
   return {values,uncertain,source:text};
 }
 
@@ -49,7 +50,7 @@ export function excerpt(value, max=140) {
   return text.slice(0,end>=45?end:max).trim()+'…';
 }
 
-export function programFacts(p, groups, row) {
+export function programFacts(p, groups, row, originalFields=[]) {
   const texts=Object.fromEntries(Object.entries(groups).map(([key,fields])=>[key,fields.map(f=>f.value).join('\n')]));
   const admission=groups.admission.filter(f=>/途径|申请.*要求|初试|考试|招生渠道/.test(f.label));
   const summary={
@@ -57,6 +58,9 @@ export function programFacts(p, groups, row) {
     courses:excerpt(texts.courses),fees:excerpt(texts.fees),fit:excerpt(texts.fit),dates:excerpt(texts.dates),
   };
   const routeOverview=row?.[4]||'';
-  const routeSource=p.region==='china-mainland'&&!/推免|统考|网申|直接申请|自主招生/.test(routeOverview)?admission.map(f=>f.value).join('\n'):routeOverview;
+  // Use the original route field for inference so editorial cleanup cannot
+  // remove a qualification such as "统考名额待核验" from the filter metadata.
+  const originalAdmission=originalFields.filter(f=>/途径|申请.*要求|初试|考试|招生渠道/.test(f.label));
+  const routeSource=p.region==='china-mainland'&&!/推免|统考|网申|直接申请|自主招生/.test(routeOverview)?(originalAdmission.length?originalAdmission:admission).map(f=>f.value).join('\n'):routeOverview;
   return {duration:durationFact(row?.[2]||p.degree),routes:routeFact(routeSource,p.region,texts.admission+' '+texts.dates),summary};
 }
