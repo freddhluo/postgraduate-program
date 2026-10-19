@@ -15,7 +15,7 @@ onMounted(()=>{if(location.hash)document.getElementById(decodeURIComponent(locat
  <header class="page-intro"><div class="eyebrow">PATHS FROM OUR COMMUNITY</div><h1>看看他们，走向了哪里。</h1><p>从统计学院出发，去金融、数据、研究与公共服务的不同现场。<br>读一段真实经历，找到值得尝试的下一步。</p></header>
  <div class="alumni-intro-grid"><div><strong>{{data.cases.length}}</strong><span>本科升学案例</span></div><div><strong>{{data.employment.length}}</strong><span>硕士就业案例</span></div><div><strong>3</strong><span>推免 · 统考 · 申请制</span></div></div>
  <nav class="alumni-nav" aria-label="毕业去向栏目"><a href="#study">本科升学</a><a href="#employment">硕士就业</a><a href="#destinations">更多历史去向</a></nav>
- <section id="study" class="alumni-section"><div class="section-heading"><div><div class="eyebrow">FURTHER STUDY</div><h2>从同专业的经历里，找准备方向</h2></div></div>
+ <section id="study" class="alumni-section"><div class="section-heading"><div><div class="eyebrow">FURTHER STUDY</div><h2>从同学院的经历里，找准备方向</h2></div></div>
  <div class="filter-bar"><label class="search-field"><span>⌕</span><input v-model="query" aria-label="搜索升学案例" placeholder="搜索姓名、大学、专业或准备经历…"></label></div>
  <div class="chips"><button v-for="c in ['', '境内升学','境外升学','推免','统考','申请制']" :key="c" :class="{active:category===c}" :aria-pressed="category===c" @click="category=c">{{c||'全部案例'}}</button></div>
  <p class="helper">以下为专访报道时的升学选择。其他录取单独列示；个人经历可供参考，并非项目录取门槛。</p>

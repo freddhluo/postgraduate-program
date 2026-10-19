@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import assert from 'node:assert/strict';
-import {studentText} from './student-content.mjs';
+import {studentText,timelineText,render,programTitle} from './student-content.mjs';
 const catalog=JSON.parse(fs.readFileSync('data/catalog.json'));
 const programs=JSON.parse(fs.readFileSync('docs/public/data/programs.json'));
 const timelines=JSON.parse(fs.readFileSync('docs/public/data/timelines.json'));
@@ -11,6 +11,20 @@ const alumni=JSON.parse(fs.readFileSync('data/alumni.json'));
 assert.equal(studentText('项目级就业率官网未公开。'),'');
 assert.ok(studentText('2027年学费12.8万元；2028年费用待核验。').includes('12.8万元'));
 assert.ok(studentText('开学前至少2年毕业后全职工作经验，本科实习不算。').includes('本科实习不算'));
+assert.equal(programTitle('应用统计硕士 / 英文正式项目名官网未公开（数学科学学院）'),'应用统计硕士（数学科学学院）');
+const dateTable=render(timelineText('| 项目 | 事项 | 日期 | 未公开事项 |\n|---|---|---|---|\n| A | 报名 | 2027-01-01 | 面试待核验 |\n| B | 申请 | 官网未公开 | 待核验 |'));
+assert.ok(dateTable.includes('<thead>') && dateTable.includes('<table>'));
+assert.ok(dateTable.includes('2027-01-01') && !dateTable.includes('<td>B</td>'));
+assert.equal(catalog.schools.filter(s=>s.region==='united-kingdom').length,4);
+assert.equal(catalog.schools.filter(s=>s.region==='australia').length,3);
+assert.ok(!catalog.schools.some(s=>s.region==='other'));
+for(const [id,tag] of [['cn-nankai-p007','统计与应用数学'],['us-nyu-p009','统计与应用数学'],['au-unimelb-p004','精算与风险管理'],['other-oxford-p006','数据与商业分析']])assert.ok(programs.find(p=>p.id===id)?.tags.includes(tag),id+' category missing');
+assert.ok(!programs.find(p=>p.id==='cn-pku-p004').tags.includes('管理与运筹'));
+for(const p of programs) {
+ assert.ok(!/官网未公开|待官网确认|英文称谓待核/.test(p.title),p.id+' title has editorial notes');
+ assert.ok(p.tags.length>0,p.id+' has no category');
+ for(const key of ['title','department','degree','focus'])assert.ok(!/(?<!\w)S\d+[：:]|(?<!\w)S\d+(?!\w)/.test(p[key]),p.id+' citation code leaked into '+key);
+}
 const alumniPage=fs.readFileSync(dist+'/alumni.html','utf8');
 const people=[...alumni.cases,...alumni.employment];
 assert.equal(new Set(people.map(a=>a.id)).size,people.length);
@@ -21,7 +35,7 @@ for(const a of people){
 }
 assert.equal(programs.length,catalog.programCount);assert.equal(new Set(programs.map(p=>p.id)).size,programs.length);
 for(const s of catalog.schools){
- const src=fs.readFileSync(`schools/${s.region}/${s.id}.md`);
+ const src=fs.readFileSync(`schools/${s.sourceRegion}/${s.id}.md`);
  assert.equal(crypto.createHash('sha256').update(src).digest('hex'),s.hash);
  assert.deepEqual(src,fs.readFileSync('docs/public'+s.md));
  assert.equal(programs.filter(p=>p.schoolId===s.id).length,s.count);
@@ -32,6 +46,8 @@ for(const s of catalog.schools){
  assert.ok(page.includes('program-details'));
  assert.ok(!page.includes('调研草稿'),'research status leaked into student page');
  assert.ok(!page.includes('本次整合'),'build process leaked into student page');
+ assert.ok(!/<p>\s*\|(?:\s*:?-+:?\s*\|)/.test(page),'orphan table separator in '+s.id);
+ assert.ok(!page.includes('class="VPSidebar'),'duplicate navigation in '+s.id);
  if(s.pdf){assert.ok(fs.readFileSync('docs/public'+s.pdf).subarray(0,5).toString()==='%PDF-');assert.ok(fs.existsSync(dist+s.pdf));}
  for(const p of programs.filter(p=>p.schoolId===s.id)){
   assert.ok(page.includes(`id="${p.id}"`),p.id+' anchor missing');

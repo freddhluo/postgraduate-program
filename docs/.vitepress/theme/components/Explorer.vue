@@ -1,7 +1,7 @@
 <script setup>
 import {ref,computed,onMounted,watch,nextTick} from 'vue';import {withBase} from 'vitepress';import catalog from '../../../../data/catalog.json';
 const all=ref([]),query=ref(''),region=ref(''),school=ref(''),tag=ref(''),page=ref(1),selected=ref([]),showCompare=ref(false),error=ref(''),loading=ref(true),note=ref('');const compareEl=ref(null);
-const categories=['量化金融','金融与金融科技','统计与应用数学','数据与商业分析','经济与计量','管理与运筹'];
+const categories=['量化金融','金融与金融科技','统计与应用数学','数据与商业分析','经济与计量','管理与运筹','精算与风险管理'];
 async function load(){loading.value=true;error.value='';try{const r=await fetch(withBase('/data/programs.json'));if(!r.ok)throw Error();all.value=await r.json();const params=new URLSearchParams(location.search);query.value=params.get('q')||'';selected.value=(params.get('compare')||'').split(',').filter(id=>all.value.some(p=>p.id===id)).slice(0,4);if(!selected.value.length){try{selected.value=JSON.parse(localStorage.getItem('grad-compare')||'[]').filter(id=>all.value.some(p=>p.id===id)).slice(0,4)}catch{}}const add=params.get('add');if(add&&all.value.some(p=>p.id===add)&&!selected.value.includes(add)){if(selected.value.length<4)selected.value=[...selected.value,add];else note.value='已选满 4 个项目，请先移除一个再加入。';}if(params.has('compare')&&selected.value.length)showCompare.value=true;}catch{error.value='项目数据加载失败，请检查网络后重试。'}finally{loading.value=false;}}
 onMounted(load);
 const schools=computed(()=>catalog.schools.filter(s=>!region.value||s.region===region.value));
